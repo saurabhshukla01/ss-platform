@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ink text-high font-body antialiased;
+}
+
+h1, h2, h3, h4 {
+  @apply font-display;
+}
+
+::selection {
+  background: #3B82F6;
+  color: #0A0E14;
+}
+
+:focus-visible {
+  outline: 2px solid #22D3EE;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Reusable component-level classes */
+.container-page {
+  @apply mx-auto w-full max-w-6xl px-6;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 bg-electric text-ink font-medium px-5 py-3 rounded transition-colors hover:bg-cyan;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 border border-line text-high font-medium px-5 py-3 rounded transition-colors hover:border-electric;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 text-electric font-medium transition-colors hover:text-cyan;
+}
+
+.card-dark {
+  @apply bg-surface border border-line rounded p-6;
+}
+
+.card-light {
+  @apply bg-white border border-paperline rounded p-6;
+}
+
+.label-eyebrow {
+  @apply text-electric text-sm font-medium;
+}
+
+.pulse-dot {
+  @apply relative inline-flex h-2 w-2 rounded-full bg-cyan;
+}
+
+.pulse-dot::after {
+  content: '';
+  @apply absolute inset-0 rounded-full bg-cyan;
+  animation: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.6); opacity: 0; }
+}

@@ -1,0 +1,27 @@
+# ============================================================
+# SS PLATFORM - REACT DEVELOPMENT ENVIRONMENT
+# ============================================================
+
+# FastAPI API
+VITE_API_BASE_URL=http://127.0.0.1:8000/api/v1
+
+
+# ============================================================
+# DEVELOPMENT STATIC ADMIN LOGIN
+# ============================================================
+#
+# IMPORTANT:
+# These VITE_* values are exposed to the browser.
+# Use this ONLY for local development.
+#
+# Disable this before production deployment:
+#
+# VITE_ENABLE_STATIC_ADMIN=false
+#
+# ============================================================
+
+VITE_ENABLE_STATIC_ADMIN=true
+
+VITE_STATIC_ADMIN_EMAIL=admin@ssplatform.com
+
+VITE_STATIC_ADMIN_PASSWORD=#########
