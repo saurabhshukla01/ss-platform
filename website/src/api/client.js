@@ -6,34 +6,73 @@ const API_BASE_URL =
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+
   headers: {
+    'Content-Type': 'application/json',
     Accept: 'application/json',
   },
+
+  timeout: 15000,
 })
 
-export function getToken() {
-  return localStorage.getItem('access_token')
-}
 
-export function setToken(token) {
-  if (token) {
-    localStorage.setItem('access_token', token)
-  } else {
-    localStorage.removeItem('access_token')
-  }
-}
+// =========================================================
+// REQUEST INTERCEPTOR
+// =========================================================
 
 api.interceptors.request.use(
   (config) => {
-    const token = getToken()
+    const token =
+      localStorage.getItem('access_token')
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+      config.headers.Authorization =
+        `Bearer ${token}`
     }
 
     return config
   },
-  (error) => Promise.reject(error),
+
+  (error) => {
+    return Promise.reject(error)
+  }
 )
+
+
+// =========================================================
+// RESPONSE INTERCEPTOR
+// =========================================================
+
+api.interceptors.response.use(
+  (response) => {
+    return response
+  },
+
+  (error) => {
+    if (
+      error.response?.status === 401
+    ) {
+      const requestUrl =
+        error.config?.url || ''
+
+      // Don't immediately clear token when
+      // the login request itself returns 401.
+      if (
+        !requestUrl.includes('/auth/login')
+      ) {
+        localStorage.removeItem(
+          'access_token'
+        )
+
+        localStorage.removeItem(
+          'admin'
+        )
+      }
+    }
+
+    return Promise.reject(error)
+  }
+)
+
 
 export default api
