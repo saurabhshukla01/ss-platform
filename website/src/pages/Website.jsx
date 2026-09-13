@@ -2,15 +2,18 @@ import { useState } from 'react'
 import AdminLayout from '../components/AdminLayout'
 import Tabs from '../components/Tabs'
 import CrudManager from '../components/CrudManager'
+import BrandingPanel from '../components/BrandingPanel'
 
-const TABS = ['Banners', 'Announcements', 'Offers', 'Projects', 'Team', 'Testimonials']
+const TABS = ['Branding', 'Banners', 'Announcements', 'Offers', 'Projects', 'Team', 'Testimonials']
 
 export default function Website() {
-  const [tab, setTab] = useState('Banners')
+  const [tab, setTab] = useState('Branding')
 
   return (
     <AdminLayout title="Website">
       <Tabs tabs={TABS} active={tab} onChange={setTab} />
+
+      {tab === 'Branding' && <BrandingPanel />}
 
       {tab === 'Banners' && (
         <CrudManager

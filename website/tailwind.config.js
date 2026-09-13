@@ -13,9 +13,12 @@ export default {
         high: '#EDF1F7',
         muted: '#8C96A6',
         muted2: '#5B6472',
-        electric: '#3B82F6',
-        electricdim: '#1D4ED8',
-        cyan: '#22D3EE',
+        // These three read from CSS variables (defaults in src/index.css)
+        // so the Admin Panel's Branding settings can recolor the live
+        // site at runtime without a rebuild. See src/theme/ThemeProvider.jsx.
+        electric: 'var(--color-electric, #3B82F6)',
+        electricdim: 'var(--color-electric-dim, #1D4ED8)',
+        cyan: 'var(--color-accent, #22D3EE)',
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],

@@ -16,7 +16,9 @@ Safe to run multiple times.
 from app.core.database import SessionLocal, engine, Base
 from app.core.security import hash_password
 from app.models.identity import Role, Permission, Admin
-from app.models.services import ServiceCategory
+from app.models.services import ServiceCategory, Service
+from app.models.content import Banner, Announcement
+from app.models.brand import Project, TeamMember, Testimonial, Setting
 
 # Register all SQLAlchemy models
 import app.models  # noqa: F401
@@ -57,6 +59,64 @@ CATEGORIES = [
     ),
 ]
 
+
+# (category_slug, name, slug, short_description, starting_price, is_custom_quote_only)
+SERVICES = [
+    ("digital-products", "Website Development", "website-development",
+     "Fast, responsive websites built on React and FastAPI, managed entirely from your Admin Panel.", 15000, False),
+    ("digital-products", "E-Commerce", "e-commerce",
+     "Full storefronts with catalogue, checkout and order management built in.", 35000, False),
+    ("digital-products", "Admin Panel", "admin-panel",
+     "A secure command center to manage services, content, leads and payments.", 20000, False),
+    ("digital-products", "REST API", "rest-api",
+     "FastAPI backends with JWT auth, documented endpoints and MySQL storage.", 18000, False),
+    ("applications", "Mobile Application", "mobile-application",
+     "Customer and business apps that connect to the same API as your website.", None, True),
+    ("applications", "CRM", "crm",
+     "Track inquiries, leads and customers through a defined sales pipeline.", 25000, False),
+    ("infrastructure", "Hosting & Deployment", "hosting-deployment",
+     "VPS or cloud hosting with SSL, DNS and Nginx configured and maintained.", 5000, False),
+    ("business-solutions", "Automation & Integration", "automation-integration",
+     "Connect your tools and automate repetitive business workflows.", None, True),
+]
+
+THEME_DEFAULTS = {
+    "site_name": "Saurabh Shukla.",
+    "tagline": "Build. Automate. Grow.",
+    "primary_color": "#3B82F6",
+    "primary_dark_color": "#1D4ED8",
+    "accent_color": "#22D3EE",
+}
+
+BANNERS = [
+    ("Build. Automate. Grow.", None, "/services", 1, True),
+]
+
+ANNOUNCEMENTS = [
+    ("New: Business plan now includes a free 30-day maintenance window — mention this on your inquiry.", "/pricing", True),
+]
+
+PROJECTS = [
+    ("SS Collections — Catalogue Platform", "ss-collections-catalogue-platform",
+     "A dynamic product catalogue with an admin-managed pricing engine.", "React, FastAPI, MySQL", "live", True),
+    ("Client CRM Rollout", "client-crm-rollout",
+     "Lead pipeline and follow-up tracking replacing spreadsheet workflows.", "React, FastAPI, JWT", "completed", False),
+    ("Hosting & Maintenance Program", "hosting-maintenance-program",
+     "Managed hosting, SSL renewal and uptime monitoring for six client sites.", "Nginx, Linux, Cloudflare", "live", False),
+]
+
+TEAM = [
+    ("Saurabh Shukla", "CTO — SS Collections Group",
+     "Leads technology strategy and platform development for SS Collections Group, "
+     "and builds the same services for outside clients through this platform.", None),
+]
+
+TESTIMONIALS = [
+    ("Retail client", "SS Collections Group",
+     "The admin panel means we update prices and offers ourselves — no waiting on a developer.", 5),
+    ("Service business owner", "Local business",
+     "Inquiries now land directly in a pipeline instead of getting lost in email.", 5),
+]
 
 ADMIN_EMAIL = "admin@ssplatform.com"
 ADMIN_PASSWORD = "ChangeMe123!"
@@ -205,6 +265,117 @@ def seed():
 
                 print(f"  ✓ Category exists: {name}")
 
+        db.flush()
+
+        category_by_slug = {
+            c.slug: c
+            for c in db.query(ServiceCategory).all()
+        }
+
+        # =========================================================
+        # 5. SERVICES
+        # =========================================================
+
+        print("Seeding services...")
+
+        for category_slug, name, slug, short_description, price, custom_quote in SERVICES:
+            service = (
+                db.query(Service)
+                .filter(Service.slug == slug)
+                .first()
+            )
+
+            if not service:
+                service = Service(
+                    category_id=category_by_slug[category_slug].id,
+                    name=name,
+                    slug=slug,
+                    short_description=short_description,
+                    starting_price=price,
+                    is_custom_quote_only=custom_quote,
+                )
+                db.add(service)
+                print(f"  + Service: {name}")
+            else:
+                service.name = name
+                service.short_description = short_description
+                service.starting_price = price
+                service.is_custom_quote_only = custom_quote
+                print(f"  ✓ Service exists: {name}")
+
+        # =========================================================
+        # 6. THEME / BRANDING SETTINGS
+        # =========================================================
+
+        print("Seeding default theme settings...")
+
+        for key, value in THEME_DEFAULTS.items():
+            setting = (
+                db.query(Setting)
+                .filter(Setting.group == "theme", Setting.key == key)
+                .first()
+            )
+
+            if not setting:
+                db.add(Setting(group="theme", key=key, value=value))
+                print(f"  + Theme setting: {key} = {value}")
+            else:
+                print(f"  ✓ Theme setting exists: {key} = {setting.value}")
+
+        # =========================================================
+        # 7. WEBSITE CONTENT — banners, announcements
+        # =========================================================
+
+        print("Seeding website content...")
+
+        if db.query(Banner).count() == 0:
+            for title, image_url, link_url, display_order, is_active in BANNERS:
+                db.add(Banner(
+                    title=title, image_url=image_url, link_url=link_url,
+                    display_order=display_order, is_active=is_active,
+                ))
+            print(f"  + {len(BANNERS)} banner(s)")
+        else:
+            print("  ✓ Banners already seeded")
+
+        if db.query(Announcement).count() == 0:
+            for message, link_url, is_active in ANNOUNCEMENTS:
+                db.add(Announcement(message=message, link_url=link_url, is_active=is_active))
+            print(f"  + {len(ANNOUNCEMENTS)} announcement(s)")
+        else:
+            print("  ✓ Announcements already seeded")
+
+        # =========================================================
+        # 8. PROJECTS, TEAM, TESTIMONIALS
+        # =========================================================
+
+        print("Seeding projects, team and testimonials...")
+
+        for title, slug, summary, tech_stack, proj_status, is_featured in PROJECTS:
+            project = db.query(Project).filter(Project.slug == slug).first()
+            if not project:
+                db.add(Project(
+                    title=title, slug=slug, summary=summary, tech_stack=tech_stack,
+                    status=proj_status, is_featured=is_featured,
+                ))
+                print(f"  + Project: {title}")
+            else:
+                print(f"  ✓ Project exists: {title}")
+
+        if db.query(TeamMember).count() == 0:
+            for full_name, role_title, bio, photo_url in TEAM:
+                db.add(TeamMember(full_name=full_name, role_title=role_title, bio=bio, photo_url=photo_url))
+            print(f"  + {len(TEAM)} team member(s)")
+        else:
+            print("  ✓ Team already seeded")
+
+        if db.query(Testimonial).count() == 0:
+            for client_name, client_company, quote, rating in TESTIMONIALS:
+                db.add(Testimonial(client_name=client_name, client_company=client_company, quote=quote, rating=rating))
+            print(f"  + {len(TESTIMONIALS)} testimonial(s)")
+        else:
+            print("  ✓ Testimonials already seeded")
+
         # =========================================================
         # COMMIT
         # =========================================================
@@ -222,6 +393,11 @@ def seed():
         print(f"Password : {ADMIN_PASSWORD}")
         print()
         print("IMPORTANT: Change the default password after first login.")
+        print("=" * 60)
+        print()
+        print("Public website now has default services, projects, team,")
+        print("testimonials, a banner/announcement and a default theme")
+        print("(colors editable from Admin Panel -> Website -> Branding).")
         print("=" * 60)
 
     except Exception:

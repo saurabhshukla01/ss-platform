@@ -21,7 +21,7 @@ export default function Leads() {
     <AdminLayout title="CRM — Leads">
       <div className="flex gap-4 mb-5 border-b border-panelline">
         <span className="text-sm font-medium text-electric border-b-2 border-electric pb-2">Leads</span>
-        <Link to="/crm/inquiries" className="text-sm text-muted pb-2 hover:text-ink2">Inquiries</Link>
+        <Link to="/admin/crm/inquiries" className="text-sm text-muted pb-2 hover:text-ink2">Inquiries</Link>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
@@ -62,7 +62,7 @@ export default function Leads() {
                 <td className="td">{l.estimated_value ? `₹${Number(l.estimated_value).toLocaleString('en-IN')}` : '—'}</td>
                 <td className="td text-muted">{new Date(l.created_at).toLocaleDateString()}</td>
                 <td className="td text-right">
-                  <Link to={`/crm/leads/${l.id}`} className="btn-ghost">Open</Link>
+                  <Link to={`/admin/crm/leads/${l.id}`} className="btn-ghost">Open</Link>
                 </td>
               </tr>
             ))}

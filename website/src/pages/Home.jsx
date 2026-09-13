@@ -10,12 +10,26 @@ import { trackEvent } from '../api/analytics'
 
 export default function Home() {
   const [services, setServices] = useState(fallbackServices.slice(0, 6))
+  const [homeProjects, setHomeProjects] = useState(projects)
+  const [homeTestimonials, setHomeTestimonials] = useState(testimonials)
 
   useEffect(() => {
     api.get('/services').then((res) => {
       if (res.data?.length) {
         setServices(
           res.data.slice(0, 6).map((s) => ({ ...s, category: s.category?.name }))
+        )
+      }
+    }).catch(() => {})
+
+    api.get('/website/projects').then((res) => {
+      if (res.data?.length) setHomeProjects(res.data.slice(0, 3))
+    }).catch(() => {})
+
+    api.get('/website/testimonials').then((res) => {
+      if (res.data?.length) {
+        setHomeTestimonials(
+          res.data.slice(0, 2).map((t) => ({ name: t.client_name, company: t.client_company, quote: t.quote }))
         )
       }
     }).catch(() => {})
@@ -127,12 +141,12 @@ export default function Home() {
       <section className="container-page py-20">
         <SectionHeading eyebrow="Recent work" title="Projects in production" />
         <div className="grid md:grid-cols-3 gap-5 mt-10">
-          {projects.map((p) => (
+          {homeProjects.map((p) => (
             <div key={p.title} className="card-dark">
               <p className="text-xs text-cyan mb-2">{p.status === 'live' ? 'Live' : 'Completed'}</p>
               <h3 className="text-high font-medium">{p.title}</h3>
               <p className="text-sm text-muted mt-2">{p.summary}</p>
-              <p className="text-xs text-muted2 mt-4 pt-4 border-t border-line">{p.stack}</p>
+              <p className="text-xs text-muted2 mt-4 pt-4 border-t border-line">{p.tech_stack || p.stack}</p>
             </div>
           ))}
         </div>
@@ -140,7 +154,7 @@ export default function Home() {
 
       {/* Testimonials */}
       <section className="container-page py-20 border-t border-line grid md:grid-cols-2 gap-6">
-        {testimonials.map((t) => (
+        {homeTestimonials.map((t) => (
           <blockquote key={t.name} className="card-dark">
             <p className="text-high leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
             <footer className="mt-4 text-sm text-muted2">{t.name} — {t.company}</footer>

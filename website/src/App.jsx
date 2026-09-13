@@ -1,10 +1,21 @@
 import {
-  Navigate,
   Route,
   Routes,
 } from 'react-router-dom'
 
 import ProtectedRoute from './components/ProtectedRoute'
+
+import Home from './pages/Home'
+import About from './pages/About'
+import Services from './pages/Services'
+import ServiceDetail from './pages/ServiceDetail'
+import PricingPublic from './pages/Pricing'
+import ProjectsPublic from './pages/Projects'
+import FAQLegal from './pages/FAQLegal'
+import Contact from './pages/Contact'
+import InquiryPublic from './pages/Inquiry'
+import CheckoutPublic from './pages/Checkout'
+import NotFound from './pages/NotFound'
 
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -30,7 +41,23 @@ export default function App() {
   return (
     <Routes>
       {/* =====================================================
-          PUBLIC ROUTES
+          PUBLIC WEBSITE — the customer-facing site, managed
+          from the Admin Panel (Website / Content / Settings).
+          ===================================================== */}
+
+      <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/services/:slug" element={<ServiceDetail />} />
+      <Route path="/pricing" element={<PricingPublic />} />
+      <Route path="/projects" element={<ProjectsPublic />} />
+      <Route path="/faq" element={<FAQLegal />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/inquiry" element={<InquiryPublic />} />
+      <Route path="/checkout" element={<CheckoutPublic />} />
+
+      {/* =====================================================
+          ADMIN LOGIN
           ===================================================== */}
 
       <Route
@@ -39,7 +66,8 @@ export default function App() {
       />
 
       {/* =====================================================
-          PROTECTED ADMIN ROUTES
+          PROTECTED ADMIN ROUTES — all live under /admin so they
+          never collide with the public site's paths above.
           ===================================================== */}
 
       <Route
@@ -52,22 +80,10 @@ export default function App() {
           element={<Dashboard />}
         />
 
-        {/* Root */}
-
-        <Route
-          path="/"
-          element={
-            <Navigate
-              to="/admin"
-              replace
-            />
-          }
-        />
-
         {/* Analytics */}
 
         <Route
-          path="/analytics"
+          path="/admin/analytics"
           element={
             <AnalyticsPage />
           }
@@ -78,19 +94,19 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/crm"
+          path="/admin/crm"
           element={<Leads />}
         />
 
         <Route
-          path="/crm/inquiries"
+          path="/admin/crm/inquiries"
           element={
             <Inquiries />
           }
         />
 
         <Route
-          path="/crm/leads/:id"
+          path="/admin/crm/leads/:id"
           element={
             <LeadDetail />
           }
@@ -101,21 +117,21 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/services"
+          path="/admin/services"
           element={
             <ServicesList />
           }
         />
 
         <Route
-          path="/services/new"
+          path="/admin/services/new"
           element={
             <ServiceForm />
           }
         />
 
         <Route
-          path="/services/:id/edit"
+          path="/admin/services/:id/edit"
           element={
             <ServiceForm />
           }
@@ -126,7 +142,7 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/subscriptions"
+          path="/admin/subscriptions"
           element={
             <Subscriptions />
           }
@@ -137,7 +153,7 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/payments"
+          path="/admin/payments"
           element={
             <Payments />
           }
@@ -148,7 +164,7 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/website"
+          path="/admin/website"
           element={
             <Website />
           }
@@ -159,7 +175,7 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/content"
+          path="/admin/content"
           element={
             <Content />
           }
@@ -170,7 +186,7 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/seo"
+          path="/admin/seo"
           element={<SEO />}
         />
 
@@ -179,7 +195,7 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/communication"
+          path="/admin/communication"
           element={
             <Communication />
           }
@@ -190,7 +206,7 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/settings"
+          path="/admin/settings"
           element={
             <Settings />
           }
@@ -201,7 +217,7 @@ export default function App() {
             ================================================= */}
 
         <Route
-          path="/audit-logs"
+          path="/admin/audit-logs"
           element={
             <AuditLogs />
           }
@@ -209,17 +225,12 @@ export default function App() {
       </Route>
 
       {/* =====================================================
-          UNKNOWN ROUTES
+          UNKNOWN ROUTES — public 404 (keeps site nav/footer)
           ===================================================== */}
 
       <Route
         path="*"
-        element={
-          <Navigate
-            to="/admin"
-            replace
-          />
-        }
+        element={<NotFound />}
       />
     </Routes>
   )

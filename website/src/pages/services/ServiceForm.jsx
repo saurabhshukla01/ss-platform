@@ -67,7 +67,7 @@ export default function ServiceForm() {
       } else {
         await api.post('/services/admin', payload)
       }
-      navigate('/services')
+      navigate('/admin/services')
     } catch (err) {
       setError(err.response?.data?.detail || 'Could not save service.')
     } finally {
@@ -143,7 +143,7 @@ export default function ServiceForm() {
           <button type="submit" disabled={saving} className="btn-primary">
             {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Create service'}
           </button>
-          <button type="button" onClick={() => navigate('/services')} className="btn-secondary">Cancel</button>
+          <button type="button" onClick={() => navigate('/admin/services')} className="btn-secondary">Cancel</button>
         </div>
       </form>
     </AdminLayout>

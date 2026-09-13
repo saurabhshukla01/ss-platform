@@ -14,7 +14,7 @@ export default function Inquiries() {
   return (
     <AdminLayout title="CRM — Inquiries">
       <div className="flex gap-4 mb-5 border-b border-panelline">
-        <Link to="/crm" className="text-sm text-muted pb-2 hover:text-ink2">Leads</Link>
+        <Link to="/admin/crm" className="text-sm text-muted pb-2 hover:text-ink2">Leads</Link>
         <span className="text-sm font-medium text-electric border-b-2 border-electric pb-2">Inquiries</span>
       </div>
 

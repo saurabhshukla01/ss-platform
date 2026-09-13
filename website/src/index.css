@@ -4,6 +4,12 @@
 
 html {
   scroll-behavior: smooth;
+  /* Default theme colors — overridden at runtime from the admin-managed
+     /settings/theme values by <ThemeProvider>. Keeping defaults here means
+     the site still looks right even before that fetch resolves. */
+  --color-electric: #3B82F6;
+  --color-electric-dim: #1D4ED8;
+  --color-accent: #22D3EE;
 }
 
 body {
@@ -15,12 +21,12 @@ h1, h2, h3, h4 {
 }
 
 ::selection {
-  background: #3B82F6;
+  background: var(--color-electric);
   color: #0A0E14;
 }
 
 :focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 

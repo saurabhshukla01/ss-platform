@@ -1,8 +1,16 @@
+import { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
 import SectionHeading from '../components/SectionHeading'
 import { Link } from 'react-router-dom'
+import api from '../api/client'
 
 export default function About() {
+  const [team, setTeam] = useState([])
+
+  useEffect(() => {
+    api.get('/website/team').then((res) => setTeam(res.data || [])).catch(() => {})
+  }, [])
+
   return (
     <Layout>
       <section className="container-page pt-16 pb-20">
@@ -52,6 +60,18 @@ export default function About() {
               platform.
             </p>
           </div>
+
+          {team.length > 0 && (
+            <div className="mt-10 space-y-4">
+              {team.map((member) => (
+                <div key={member.id} className="border-l-2 border-electric pl-4">
+                  <p className="text-high font-medium">{member.full_name}</p>
+                  {member.role_title && <p className="text-muted2 text-xs">{member.role_title}</p>}
+                  {member.bio && <p className="text-muted text-sm mt-1 leading-relaxed">{member.bio}</p>}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

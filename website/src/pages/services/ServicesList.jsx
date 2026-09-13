@@ -26,7 +26,7 @@ export default function ServicesList() {
       {tab === 'Services' && (
         <>
           <div className="flex justify-end mb-4">
-            <Link to="/services/new" className="btn-primary"><Plus size={16} /> New service</Link>
+            <Link to="/admin/services/new" className="btn-primary"><Plus size={16} /> New service</Link>
           </div>
 
           <div className="panel overflow-hidden">
@@ -55,7 +55,7 @@ export default function ServicesList() {
                       <span className="badge bg-status-converted/10 text-status-converted">Active</span>
                     </td>
                     <td className="td text-right">
-                      <Link to={`/services/${s.id}/edit`} className="btn-ghost"><Pencil size={13} /> Edit</Link>
+                      <Link to={`/admin/services/${s.id}/edit`} className="btn-ghost"><Pencil size={13} /> Edit</Link>
                     </td>
                   </tr>
                 ))}

@@ -1,93 +1,280 @@
-# Saurabh Shukla Technology Platform — Backend Foundation
+# SS Platform — Backend (FastAPI + MySQL)
 
-FastAPI + MySQL backend implementing the core data model and REST API
-from the Business Growth Blueprint document (sections 6, 8, 9, 11, 13, 15).
+REST API powering both the **public website** and the **Admin Panel** —
+services catalogue, CRM/leads, website content (banners, announcements,
+projects, team, testimonials), theme/branding settings, and first-party
+analytics.
 
-## Stack
-- Python 3.13+, FastAPI, Pydantic v2, SQLAlchemy 2 (typed models), Alembic
-- MySQL (PyMySQL driver)
-- JWT auth (python-jose) + bcrypt password hashing (passlib)
+---
 
-## What's implemented in this foundation
+## 1. Prerequisites
 
-**Database (MySQL, section 11)** — full SQLAlchemy model set for all
-domains in the spec: Identity, Services, CRM, Commerce, Subscriptions,
-Credits, Analytics, Content, Brand, Operations (`app/models/`).
+Install these before you start:
 
-**REST API (section 13)** — working endpoints:
-- `POST /api/v1/auth/login`, `GET /api/v1/auth/me` — Admin JWT auth
-- `GET /api/v1/services`, `GET /api/v1/services/{slug}` — public catalogue
-- `POST/PUT/DELETE /api/v1/services/admin/*` — admin CRUD (permission-gated)
-- `POST /api/v1/inquiries` — public "Get Quote"/Contact form → auto-creates a `NEW` lead
-- `GET /api/v1/inquiries/admin`, `GET /api/v1/inquiries/admin/{id}` — admin view
-- `GET/PATCH /api/v1/crm/leads/*` — lead pipeline (status transitions, notes, follow-ups)
-- `POST /api/v1/analytics/session|page-view|event` — first-party visitor tracking (section 9)
-- `GET /api/v1/analytics/admin/summary` — visitor/session/event KPIs (section 18)
+| Tool | Version | Check with |
+|---|---|---|
+| Python | 3.12+ | `python3 --version` |
+| MySQL Server | 8.0+ (or MariaDB 10.6+) | `mysql --version` |
+| pip | latest | `pip --version` |
 
-**Security (section 15)** — JWT auth, role/permission-based authorization
-(`require_permission(...)` dependency), bcrypt hashing, CORS config,
-no sensitive payment data stored (only gateway references — see
-`payment_transactions` model comment), audit log table ready for use.
+You do **not** need Node.js for the backend — that's only for the
+`website` folder (see the other README).
 
-**Not yet built** (next phases): payment gateway integration (Razorpay),
-subscription billing/renewal jobs, admin panel UI, public website,
-content/SEO admin endpoints, email/WhatsApp sending, file uploads.
-The database tables for all of these already exist so the next phase
-is wiring routers + business logic on top of them.
+---
 
-## Setup
+## 2. Get the code into a working folder
 
 ```bash
-cd backend
-python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
+cd ss-platform-main/backend
+```
+
+Every command below is run from this `backend/` folder unless stated
+otherwise.
+
+---
+
+## 3. Create and activate a virtual environment
+
+```bash
+python3 -m venv venv
+
+# macOS / Linux
+source venv/bin/activate
+
+# Windows (cmd)
+venv\Scripts\activate.bat
+
+# Windows (PowerShell)
+venv\Scripts\Activate.ps1
+```
+
+Your terminal prompt should now show `(venv)` at the start of the line.
+
+---
+
+## 4. Install Python dependencies
+
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
+```
 
-cp .env.example .env
-# edit .env: set DB_USER, DB_PASSWORD, DB_NAME, SECRET_KEY
+---
 
-# Create the MySQL database first:
-#   CREATE DATABASE ss_platform_db CHARACTER SET utf8mb4;
+## 5. Create the MySQL database
 
-# Generate and apply the first migration (creates all tables)
-alembic revision --autogenerate -m "initial schema"
+Open a MySQL client (`mysql -u root -p`, MySQL Workbench, phpMyAdmin,
+whatever you use) and run:
+
+```sql
+CREATE DATABASE ss_platforms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+The database name `ss_platforms` must match `DB_NAME` in your `.env`
+file (step 6) — change one or the other if you want a different name.
+
+---
+
+## 6. Configure environment variables
+
+Copy the example file to `.env`:
+
+```bash
+# macOS / Linux
+cp ".env example" .env
+
+# Windows (cmd)
+copy ".env example" .env
+```
+
+Open `.env` and fill in your real values:
+
+```ini
+APP_NAME="Saurabh Shukla Technology Platform API"
+ENVIRONMENT=development
+DEBUG=True
+API_V1_PREFIX=/api/v1
+
+SECRET_KEY="change-this-to-a-long-random-string"
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+ALGORITHM=HS256
+
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD="your_mysql_password"
+DB_NAME=ss_platforms
+
+# The frontend dev server origin(s), comma-separated
+CORS_ORIGINS=http://localhost:5173
+```
+
+**Important:**
+- `DB_PORT` — use `3306` for a standard local MySQL install. Only use
+  `3307` (the sample default) if your MySQL is actually listening on
+  that port (common with some Docker/XAMPP/Laragon setups).
+- `SECRET_KEY` — must be a long random string in any real deployment.
+  Generate one with: `python -c "import secrets; print(secrets.token_urlsafe(48))"`
+- `CORS_ORIGINS` — must include whatever URL the website runs on, or
+  the browser will block API requests. Add more than one, comma
+  separated, if needed (e.g. `http://localhost:5173,https://yourdomain.com`).
+
+---
+
+## 7. Create the database tables (migrations)
+
+This project uses Alembic. A migration that creates every table
+already exists in `alembic/versions/`, so you normally just need to
+apply it:
+
+```bash
 alembic upgrade head
+```
 
-# Seed baseline roles/permissions/super-admin + sample categories
+If you ever add/change a SQLAlchemy model yourself later, generate a
+new migration instead of editing the old one:
+
+```bash
+alembic revision --autogenerate -m "describe your change"
+alembic upgrade head
+```
+
+---
+
+## 8. Seed default data
+
+This creates the super-admin login, roles/permissions, service
+categories and services, default theme colors, and sample website
+content (banner, announcement, projects, team, testimonials) so the
+site and admin panel aren't empty on first run.
+
+```bash
 python -m app.seed
+```
 
-# Run the API
+This is **safe to run multiple times** — it updates existing rows
+instead of duplicating them.
+
+You'll see output ending with:
+
+```
+Super Admin Login
+------------------
+Email    : admin@ssplatform.com
+Password : ChangeMe123!
+
+IMPORTANT: Change the default password after first login.
+```
+
+---
+
+## 9. Run the API server
+
+```bash
 uvicorn app.main:app --reload
 ```
 
-API docs: http://localhost:8000/docs
-Health check: http://localhost:8000/health
+The API is now running at:
 
-Default seeded login (change immediately):
-`admin@ssplatform.com` / `ChangeMe123!`
+- **API base**: http://127.0.0.1:8000/api/v1
+- **Interactive docs (Swagger)**: http://127.0.0.1:8000/docs
+- **ReDoc**: http://127.0.0.1:8000/redoc
+- **Health check**: http://127.0.0.1:8000/health
+
+Keep this terminal running. Open a **new terminal** for the frontend
+(see `website/README.md`).
+
+---
+
+## 10. Verify it works
+
+```bash
+curl http://127.0.0.1:8000/health
+# {"status":"ok","environment":"development"}
+
+curl http://127.0.0.1:8000/api/v1/services
+# should return a JSON array of seeded services
+
+curl http://127.0.0.1:8000/api/v1/settings/theme
+# should return the default theme colors
+```
+
+Or just open http://127.0.0.1:8000/docs and try the endpoints from
+the browser.
+
+---
+
+## Everyday commands (after first-time setup)
+
+```bash
+cd backend
+source venv/bin/activate      # activate the venv each new terminal session
+uvicorn app.main:app --reload # start the API
+```
+
+To reset/re-seed data at any time:
+
+```bash
+python -m app.seed
+```
+
+---
+
+## API overview
+
+| Area | Endpoints |
+|---|---|
+| Auth | `POST /auth/login`, `GET /auth/me` |
+| Services | `GET /services`, `GET /services/{slug}`, admin CRUD under `/services/admin/*` |
+| Inquiries (CRM intake) | `POST /inquiries` (public), `GET /inquiries/admin*` |
+| CRM | `GET/PATCH /crm/leads/*` — lead pipeline, notes, follow-ups |
+| Analytics | `POST /analytics/session\|page-view\|event`, `GET /analytics/admin/summary` |
+| Website content | `GET/POST/PUT/DELETE` under `/website/banners`, `/website/announcements`, `/website/offers`, `/website/projects`, `/website/team`, `/website/testimonials` (public `GET`, everything else needs `content.manage`) |
+| Theme / branding | `GET /settings/theme` (public), `PUT /settings/theme` (admin, needs `settings.manage`) |
+
+All admin-only routes require a Bearer JWT from `/auth/login` and the
+matching permission on the admin's role. The seeded `SUPER_ADMIN` role
+has every permission.
+
+---
 
 ## Project layout
 
 ```
 app/
-  core/        config, database session, JWT/password security, auth deps
-  models/      SQLAlchemy models, one file per domain (matches spec section 11)
+  core/        config (.env loading), DB session, JWT/password security, auth deps
+  models/      SQLAlchemy models, one file per domain
   schemas/     Pydantic request/response schemas
+  crud/
+    generic.py   reusable CRUD router factory (list/create/update/delete)
   routers/     API endpoints, grouped by module
-  seed.py      baseline data for local/dev bring-up
-  main.py      FastAPI app + CORS + router registration
-alembic/       migration environment (autogenerates from app/models)
+  seed.py      baseline + sample data for local/dev bring-up
+  main.py      FastAPI app, CORS, router registration
+alembic/       migration environment + versioned migrations
+requirements.txt
+.env example   copy this to .env (step 6)
 ```
 
-## Design notes
-- Every domain table from the spec's section 11 has a corresponding
-  model, even where no API endpoint exists yet (e.g. `blogs`,
-  `subscription_plans`) — this lets Alembic generate the complete
-  schema now, with routers added incrementally without further
-  migrations for new features that reuse these tables.
-- `LeadStatus` enum matches the exact pipeline in section 8:
-  `NEW → CONTACTED → QUALIFIED → PROPOSAL_SENT → NEGOTIATION → CONVERTED/CLOSED`.
-- Analytics tracking uses a first-party `visitor_uuid`/`session_uuid`
-  generated client-side (no third-party cookies), matching section 9.
-- Payment models intentionally store only gateway references
-  (`gateway_order_id`, `gateway_payment_id`) — never card/bank details,
-  per section 7 and 15.
+---
+
+## Troubleshooting
+
+**`sqlalchemy.exc.OperationalError: ... Access denied` or `Unknown database`**
+Your `.env` DB_* values don't match a real MySQL user/database. Re-check
+step 5 and step 6.
+
+**`Could not validate credentials` (401) when calling admin endpoints**
+You're missing the `Authorization: Bearer <token>` header, or the token
+expired. Log in again via `POST /auth/login`.
+
+**CORS errors in the browser console**
+Add the exact origin the website is served from to `CORS_ORIGINS` in
+`.env`, then restart `uvicorn`.
+
+**Port 8000 already in use**
+Run on a different port: `uvicorn app.main:app --reload --port 8001`
+(and update `VITE_API_BASE_URL` in the website's `.env` to match).
+
+**Public site shows no services/projects/testimonials**
+Run `python -m app.seed` — the site falls back to placeholder data
+only if the API is unreachable or returns an empty list.

@@ -13,7 +13,7 @@ const NAVIGATION = [
       },
       {
         label: 'Analytics',
-        path: '/analytics',
+        path: '/admin/analytics',
         icon: '◔',
       },
     ],
@@ -24,12 +24,12 @@ const NAVIGATION = [
     items: [
       {
         label: 'Leads',
-        path: '/crm',
+        path: '/admin/crm',
         icon: '◎',
       },
       {
         label: 'Inquiries',
-        path: '/crm/inquiries',
+        path: '/admin/crm/inquiries',
         icon: '▤',
       },
     ],
@@ -40,17 +40,17 @@ const NAVIGATION = [
     items: [
       {
         label: 'Services',
-        path: '/services',
+        path: '/admin/services',
         icon: '◆',
       },
       {
         label: 'Subscriptions',
-        path: '/subscriptions',
+        path: '/admin/subscriptions',
         icon: '↻',
       },
       {
         label: 'Payments',
-        path: '/payments',
+        path: '/admin/payments',
         icon: '₹',
       },
     ],
@@ -61,17 +61,17 @@ const NAVIGATION = [
     items: [
       {
         label: 'Website',
-        path: '/website',
+        path: '/admin/website',
         icon: '⌂',
       },
       {
         label: 'Content',
-        path: '/content',
+        path: '/admin/content',
         icon: '▣',
       },
       {
         label: 'SEO',
-        path: '/seo',
+        path: '/admin/seo',
         icon: '⌕',
       },
     ],
@@ -82,17 +82,17 @@ const NAVIGATION = [
     items: [
       {
         label: 'Communication',
-        path: '/communication',
+        path: '/admin/communication',
         icon: '◉',
       },
       {
         label: 'Settings',
-        path: '/settings',
+        path: '/admin/settings',
         icon: '⚙',
       },
       {
         label: 'Audit Logs',
-        path: '/audit-logs',
+        path: '/admin/audit-logs',
         icon: '≡',
       },
     ],
@@ -815,7 +815,7 @@ export default function AdminLayout({
 
                   <div className="p-2">
                     <Link
-                      to="/settings"
+                      to="/admin/settings"
                       onClick={() =>
                         setProfileOpen(
                           false,

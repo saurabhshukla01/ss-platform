@@ -51,7 +51,7 @@ export default function LeadDetail() {
 
   return (
     <AdminLayout title={`Lead #${lead.id}`}>
-      <Link to="/crm" className="btn-ghost mb-4"><ArrowLeft size={14} /> Back to leads</Link>
+      <Link to="/admin/crm" className="btn-ghost mb-4"><ArrowLeft size={14} /> Back to leads</Link>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
