@@ -21,7 +21,11 @@ export default function CrudManager({ base, fields, columns, emptyLabel = 'No it
 
   function defaultForm() {
     const f = {}
-    fields.forEach((fld) => { f[fld.name] = fld.type === 'checkbox' ? false : '' })
+    fields.forEach((fld) => {
+      if (fld.type === 'checkbox') f[fld.name] = false
+      else if (fld.type === 'select') f[fld.name] = fld.options?.[0] ?? ''
+      else f[fld.name] = ''
+    })
     return f
   }
 
@@ -100,6 +104,10 @@ export default function CrudManager({ base, fields, columns, emptyLabel = 'No it
                   <textarea name={fld.name} rows={3} className="input" value={form[fld.name] || ''} onChange={handleChange} required={fld.required} />
                 ) : fld.type === 'checkbox' ? (
                   <input type="checkbox" name={fld.name} checked={!!form[fld.name]} onChange={handleChange} className="mt-1" />
+                ) : fld.type === 'select' ? (
+                  <select name={fld.name} className="input" value={form[fld.name] ?? ''} onChange={handleChange} required={fld.required}>
+                    {fld.options.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+                  </select>
                 ) : (
                   <input
                     type={fld.type || 'text'} name={fld.name} className="input"
@@ -117,7 +125,7 @@ export default function CrudManager({ base, fields, columns, emptyLabel = 'No it
         </form>
       )}
 
-      <div className="panel overflow-hidden">
+      <div className="panel overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr>

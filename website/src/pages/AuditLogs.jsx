@@ -24,7 +24,7 @@ export default function AuditLogs() {
         />
       </div>
 
-      <div className="panel overflow-hidden">
+      <div className="panel overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr>

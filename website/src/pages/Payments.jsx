@@ -23,7 +23,7 @@ export default function Payments() {
           fields={[
             { name: 'code', label: 'Coupon code', required: true },
             { name: 'description', label: 'Description' },
-            { name: 'discount_type', label: 'Type (percent / flat)', required: true },
+            { name: 'discount_type', label: 'Discount type', type: 'select', options: ['percent', 'flat'], required: true },
             { name: 'discount_value', label: 'Discount value', type: 'number', required: true },
             { name: 'max_uses', label: 'Max uses', type: 'number' },
           ]}
@@ -56,7 +56,7 @@ function OrdersList() {
   }
 
   return (
-    <div className="panel overflow-hidden">
+    <div className="panel overflow-x-auto">
       <table className="w-full">
         <thead>
           <tr>
@@ -101,7 +101,7 @@ function TransactionsList() {
   }, [])
 
   return (
-    <div className="panel overflow-hidden">
+    <div className="panel overflow-x-auto">
       <table className="w-full">
         <thead>
           <tr>

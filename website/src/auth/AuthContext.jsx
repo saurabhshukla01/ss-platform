@@ -105,15 +105,51 @@ export function AuthProvider({
       )
     }
 
+
+    // =====================================================
+    // FASTAPI OAUTH2 LOGIN
+    // =====================================================
+    //
+    // OAuth2PasswordRequestForm expects:
+    //
+    // username=<email>
+    // password=<password>
+    //
+    // Content-Type:
+    // application/x-www-form-urlencoded
+    //
+    // =====================================================
+
+    const formData =
+      new URLSearchParams()
+
+    formData.append(
+      'username',
+      email.trim()
+    )
+
+    formData.append(
+      'password',
+      password
+    )
+
+
     const response =
       await api.post(
         '/auth/login',
+        formData,
         {
-          email: email.trim(),
-          password,
+          headers: {
+            'Content-Type':
+              'application/x-www-form-urlencoded',
+          },
         }
       )
 
+
+    // =====================================================
+    // GET ACCESS TOKEN
+    // =====================================================
 
     const accessToken =
       response.data.access_token
@@ -126,16 +162,22 @@ export function AuthProvider({
     }
 
 
-    // Save token
+    // =====================================================
+    // SAVE ACCESS TOKEN
+    // =====================================================
+
     localStorage.setItem(
       'access_token',
       accessToken
     )
 
 
+    // =====================================================
+    // LOAD LOGGED-IN ADMIN
+    // =====================================================
+
     try {
 
-      // Get logged-in admin
       const meResponse =
         await api.get(
           '/auth/me'
@@ -145,11 +187,13 @@ export function AuthProvider({
         meResponse.data
 
 
+      // Save admin in React state
       setAdmin(
         adminData
       )
 
 
+      // Save admin in localStorage
       localStorage.setItem(
         'admin',
         JSON.stringify(
@@ -162,7 +206,16 @@ export function AuthProvider({
 
     } catch (error) {
 
-      // If /me fails, remove invalid token
+      console.error(
+        'Failed to load logged-in admin:',
+        error
+      )
+
+
+      // ===================================================
+      // TOKEN INVALID
+      // ===================================================
+
       localStorage.removeItem(
         'access_token'
       )
@@ -197,7 +250,7 @@ export function AuthProvider({
 
 
   // =======================================================
-  // PROVIDER
+  // PROVIDER VALUE
   // =======================================================
 
   const value = {
@@ -208,6 +261,10 @@ export function AuthProvider({
     isAuthenticated: !!admin,
   }
 
+
+  // =======================================================
+  // AUTH CONTEXT PROVIDER
+  // =======================================================
 
   return (
     <AuthContext.Provider
@@ -220,7 +277,7 @@ export function AuthProvider({
 
 
 // =========================================================
-// HOOK
+// USE AUTH HOOK
 // =========================================================
 
 export function useAuth() {
@@ -230,11 +287,13 @@ export function useAuth() {
       AuthContext
     )
 
+
   if (!context) {
     throw new Error(
       'useAuth must be used inside AuthProvider'
     )
   }
+
 
   return context
 }

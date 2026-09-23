@@ -16,6 +16,7 @@ httptools==0.8.0
 idna==3.19
 Mako==1.4.1
 MarkupSafe==3.0.3
+packaging==26.3
 pwdlib==0.3.1
 pyasn1==0.6.4
 pycparser==3.0
@@ -28,6 +29,7 @@ python-jose==3.3.0
 python-multipart==0.0.9
 PyYAML==6.0.3
 rsa==4.9.1
+setuptools==84.0.0
 six==1.17.0
 SQLAlchemy==2.0.35
 starlette==0.38.6
@@ -35,3 +37,4 @@ typing_extensions==4.16.0
 uvicorn==0.30.6
 watchfiles==1.2.0
 websockets==17.1
+wheel==0.48.0

@@ -66,9 +66,8 @@ export default function LeadDetail() {
                   key={s}
                   disabled={saving || s === lead.status}
                   onClick={() => updateStatus(s)}
-                  className={`text-xs px-3 py-1.5 rounded border transition-colors disabled:opacity-40 ${
-                    s === lead.status ? 'border-electric text-electric' : 'border-panelline text-muted hover:border-electric'
-                  }`}
+                  className={`text-xs px-3 py-1.5 rounded border transition-colors disabled:opacity-40 ${s === lead.status ? 'border-electric text-electric' : 'border-panelline text-muted hover:border-electric'
+                    }`}
                 >
                   {s.replace('_', ' ')}
                 </button>

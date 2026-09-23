@@ -146,7 +146,7 @@ function BlogManager() {
         </form>
       )}
 
-      <div className="panel overflow-hidden">
+      <div className="panel overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr><th className="th">Title</th><th className="th">Published</th><th className="th"></th></tr>

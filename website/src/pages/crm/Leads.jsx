@@ -29,9 +29,8 @@ export default function Leads() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`text-xs px-3 py-1.5 rounded border ${
-              filter === s ? 'border-electric text-electric bg-electric/5' : 'border-panelline text-muted'
-            }`}
+            className={`text-xs px-3 py-1.5 rounded border ${filter === s ? 'border-electric text-electric bg-electric/5' : 'border-panelline text-muted'
+              }`}
           >
             {s === 'ALL' ? 'All' : s.replace('_', ' ')}
           </button>

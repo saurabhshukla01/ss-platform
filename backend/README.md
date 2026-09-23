@@ -278,3 +278,10 @@ Run on a different port: `uvicorn app.main:app --reload --port 8001`
 **Public site shows no services/projects/testimonials**
 Run `python -m app.seed` — the site falls back to placeholder data
 only if the API is unreachable or returns an empty list.
+
+
+**Need to run public python server 
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+**remove reload when you run project all time
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000

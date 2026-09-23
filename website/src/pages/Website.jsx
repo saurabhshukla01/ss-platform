@@ -2,18 +2,15 @@ import { useState } from 'react'
 import AdminLayout from '../components/AdminLayout'
 import Tabs from '../components/Tabs'
 import CrudManager from '../components/CrudManager'
-import BrandingPanel from '../components/BrandingPanel'
 
-const TABS = ['Branding', 'Banners', 'Announcements', 'Offers', 'Projects', 'Team', 'Testimonials']
+const TABS = ['Banners', 'Announcements', 'Offers', 'Projects', 'Team', 'Testimonials']
 
 export default function Website() {
-  const [tab, setTab] = useState('Branding')
+  const [tab, setTab] = useState('Banners')
 
   return (
     <AdminLayout title="Website">
       <Tabs tabs={TABS} active={tab} onChange={setTab} />
-
-      {tab === 'Branding' && <BrandingPanel />}
 
       {tab === 'Banners' && (
         <CrudManager
@@ -77,7 +74,7 @@ export default function Website() {
             { name: 'summary', label: 'Summary', type: 'textarea' },
             { name: 'tech_stack', label: 'Tech stack (comma-separated)' },
             { name: 'live_url', label: 'Live URL' },
-            { name: 'status', label: 'Status (live / completed)' },
+            { name: 'status', label: 'Status', type: 'select', options: ['live', 'completed'] },
             { name: 'is_featured', label: 'Featured', type: 'checkbox' },
           ]}
           columns={[

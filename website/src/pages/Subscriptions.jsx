@@ -20,7 +20,7 @@ export default function Subscriptions() {
           fields={[
             { name: 'name', label: 'Plan name', required: true },
             { name: 'price', label: 'Price (₹)', type: 'number', required: true },
-            { name: 'billing_interval', label: 'Billing interval (MONTHLY / YEARLY)', required: true },
+            { name: 'billing_interval', label: 'Billing interval', type: 'select', options: ['MONTHLY', 'YEARLY'], required: true },
             { name: 'features', label: 'Features (free text / JSON)', type: 'textarea' },
           ]}
           columns={[
@@ -53,7 +53,7 @@ function SubscriptionsList() {
   }
 
   return (
-    <div className="panel overflow-hidden">
+    <div className="panel overflow-x-auto">
       <table className="w-full">
         <thead>
           <tr>

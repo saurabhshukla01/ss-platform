@@ -16,7 +16,7 @@ export default function Communication() {
         Every outbound and inbound touch with a lead or customer, across channels. New entries are
         created from a lead's detail page or logged automatically when the backend sends email/WhatsApp.
       </p>
-      <div className="panel overflow-hidden">
+      <div className="panel overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr>

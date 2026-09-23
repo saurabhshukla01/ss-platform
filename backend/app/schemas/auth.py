@@ -14,9 +14,8 @@ class TokenResponse(BaseModel):
 class AdminMe(BaseModel):
     id: int
     full_name: str
-    email: str
+    email: EmailStr
     is_super_admin: bool
     role_name: str | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
