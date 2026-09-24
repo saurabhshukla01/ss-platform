@@ -13,6 +13,7 @@ from app.routers.inquiries import router as inquiries_router
 from app.routers.crm import router as crm_router
 from app.routers.analytics import router as analytics_router
 from app.routers.website import router as website_router
+from app.routers import api_router
 
 
 # =========================================================
@@ -97,6 +98,10 @@ app.include_router(
     prefix=API_PREFIX,
 )
 
+app.include_router(
+    api_router,
+    prefix=API_PREFIX,
+)
 
 # =========================================================
 # SYSTEM ROUTES

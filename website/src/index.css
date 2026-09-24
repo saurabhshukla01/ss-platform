@@ -16,7 +16,10 @@ body {
   @apply bg-ink text-high font-body antialiased;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   @apply font-display;
 }
 
@@ -31,7 +34,10 @@ h1, h2, h3, h4 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -68,6 +74,47 @@ h1, h2, h3, h4 {
   @apply text-electric text-sm font-medium;
 }
 
+/* ---------------------------------------------------------
+   Admin Panel primitives
+   ---------------------------------------------------------
+   These back every admin card, form and data table
+   (Sidebar/Topbar/CrudManager/ModuleShell/Payments/
+   Subscriptions/Content/SEO/Communication/Settings/
+   AuditLogs/…). They were referenced everywhere but never
+   defined, so tables rendered with no shared padding/border
+   and every column sized itself independently of its header
+   — this is what fixes the header/column misalignment.
+   --------------------------------------------------------- */
+
+.panel {
+  @apply bg-panel border border-panelline rounded-lg;
+}
+
+table {
+  @apply w-full border-collapse;
+  table-layout: fixed;
+}
+
+.th {
+  @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted bg-canvas border-b border-panelline whitespace-nowrap overflow-hidden text-ellipsis;
+}
+
+.td {
+  @apply px-4 py-3 text-sm text-ink2 border-b border-panelline align-middle overflow-hidden text-ellipsis;
+}
+
+.input {
+  @apply w-full bg-canvas border border-panelline rounded px-3 py-2 text-sm text-ink2 placeholder:text-muted2 focus:outline-none focus:border-electric transition-colors;
+}
+
+.label {
+  @apply block text-xs font-medium text-muted mb-1;
+}
+
+.badge {
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap;
+}
+
 .pulse-dot {
   @apply relative inline-flex h-2 w-2 rounded-full bg-cyan;
 }
@@ -79,6 +126,13 @@ h1, h2, h3, h4 {
 }
 
 @keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 0.6; }
-  100% { transform: scale(2.6); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
 }
